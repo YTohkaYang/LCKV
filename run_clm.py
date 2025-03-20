@@ -619,6 +619,14 @@ def main():
             raise ValueError("--do_predict requires a test dataset")
         test_dataset = lm_datasets["test"]
 
+     
+    # TODO : Add optimizer = ...
+    # torch.optim.lr_scheduler imp CosineAnnealingWarmRestarts()
+    # foreach model.named_parameters()
+    # Add optimizer to trainer
+    # prior
+    # bind layers (Tr). top first. enu
+
     # Initialize our Trainer
     trainer = Trainer(
         model=model,

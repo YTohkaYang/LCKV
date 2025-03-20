@@ -16,10 +16,12 @@
 from trl.commands.cli_utils import SFTScriptArguments, TrlParser
 
 
-from datasets import load_dataset
+from datasets import load_dataset, dataclass
 
 from transformers import AutoTokenizer
 import models
+
+from typing import List
 
 from trl import (
     ModelConfig,
@@ -30,9 +32,14 @@ from trl import (
     get_kbit_device_map,
 )
 
+@dataclass
+class TwoStageModelConfig(ModelConfig):
+    training_stage: int = -1
+    warmup_layers: List[int] = None
 
 if __name__ == "__main__":
-    parser = TrlParser((SFTScriptArguments, SFTConfig, ModelConfig))
+    parser = TrlParser((SFTScriptArguments, SFTConfig, TwoStageModelConfig))
+    parser.add_argument()
     args, training_args, model_config = parser.parse_args_and_config()
 
     ################
@@ -70,6 +77,10 @@ if __name__ == "__main__":
         tokenizer=tokenizer,
         peft_config=get_peft_config(model_config),
     )
+
+    if training_args.training_stage == 1:
+        for param in trainer.model.parameters():
+            param.requires_grad = True # Wrong
 
     trainer.train()
     trainer.save_model(training_args.output_dir)

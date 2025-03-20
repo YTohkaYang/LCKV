@@ -310,6 +310,14 @@ class LCKVLlamaModel(LCKVLlamaPreTrainedModel, LlamaModel):
         # Initialize weights and apply final processing
         self.post_init()
 
+        # Freezing layers not in config.warmup_layers when applying two stage training
+        if config.training_stage != -1 and config.warmup_layers != None:
+            for id, layer in enumerate(self.layers):
+                if id not in config.warmup_layers:
+                    for param in layer.parameters():
+                        param.requires_grad = False
+
+
     @add_start_docstrings_to_model_forward(LLAMA_INPUTS_DOCSTRING)
     def forward(
         self,
@@ -723,8 +731,13 @@ class LCKVLlamaForCausalLM(LCKVLlamaPreTrainedModel, LlamaForCausalLM):
         LlamaForCausalLM.__init__(self, copy.deepcopy(config)) # copy config to avoid modifying the original
         self.model = LCKVLlamaModel(config)
 
+        # TODO add teaching model ( import automodel from 
+        # .from_pretrained();
+
         # Initialize weights and apply final processing
         self.post_init()
+
+    # TODO add forward. from model llama
 
     def prepare_inputs_for_generation(
         self,

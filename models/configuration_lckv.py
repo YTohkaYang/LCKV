@@ -22,6 +22,7 @@ from transformers.models.llama.configuration_llama import LlamaConfig
 
 from .utils import LayerTypeParser
 
+from typing import List
 
 class LCKVLlamaConfig(LlamaConfig):
 
@@ -35,6 +36,8 @@ class LCKVLlamaConfig(LlamaConfig):
         sliding_window: int = 4096,
         use_sequential: bool = False,
         force_nodiag: bool = False,
+        training_stage: int = -1,
+        warmup_layers: List[int] = None,
         **kwargs,
     ):
         """
@@ -65,6 +68,13 @@ class LCKVLlamaConfig(LlamaConfig):
                 Whether to force the model to not use the diagonal attention. By default, the model
                 will mask the diagonal attention only in layers necessary. If set to `True`, the model
                 will never use the diagonal attention in any layer. This is mainly for backward compatibility.
+            training_stage (`int`, *optional*, defaults to -1):
+                The current training stage.
+                -1 for no 2 stage training.
+                0 for warmup.
+                1 for formal training.
+            warmup_layers (`List[int]`, *optional*, defaults to None):
+                The indices of warmup layers.
         """
         super().__init__(**kwargs)
         self.layer_types = layer_types
@@ -73,6 +83,8 @@ class LCKVLlamaConfig(LlamaConfig):
         self.sliding_window = sliding_window
         self.use_sequential = use_sequential
         self.force_nodiag = force_nodiag
+        self.training_stage = training_stage
+        self.warmup_layers = warmup_layers
 
         if self.layer_types is None:
             self.layer_types = "_".join(map(str, range(self.num_hidden_layers)))

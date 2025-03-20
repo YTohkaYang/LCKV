@@ -3,12 +3,12 @@
 ## pretrain code for llama-tiny
 #  - to pretrain a tinyllama, change the config to `TinyLlama/TinyLlama-1.1B-intermediate-step-955k-token-2T`
 #  - to intialize the model with a pretrained model, add `--model_name_or_path TinyLlama/TinyLlama-1.1B-intermediate-step-1195k-token-2.5T`
-#  - to use the minipile dataset, use `--dataset_name JeanKaddour/minipile`, with proper `--preprocessing_num_workers`
+#  - to use the minipile dataset, use `--dataset_name JeanKaddour/minipile`, with proper `--preprocessing_num_workers` ch,
 #  - to enable wandb, use `--report_to wandb`
 accelerate launch run_clm.py \
     --tokenizer_name TinyLlama/TinyLlama-1.1B-intermediate-step-955k-token-2T \
-    --config_name configs/llama_tiny_lckv.json \
-    --config_overrides layer_types=0_6_6_6_6_6_6_7,forward_passes=7,backward_passes=2 \
+#    --config_name configs/llama_tiny_lckv.json \
+#    --config_overrides layer_types=0_6_6_6_6_6_6_7,forward_passes=7,backward_passes=2 \
     --dataset_name wikitext \
     --dataset_config_name wikitext-103-raw-v1 \
     --per_device_train_batch_size 32 \
@@ -30,7 +30,7 @@ accelerate launch run_clm.py \
     --save_strategy steps \
     --save_steps 500 \
     --evaluation_strategy steps \
-    --eval_steps 500 \
+#    --eval_steps 500 \
     --load_best_model_at_end True \
     --metric_for_best_model eval_loss \
     --report_to none \
